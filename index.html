@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffe7ee">
+  <title>Для моей Звёздочки ❤️</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 22px 16px;
+      font-family: system-ui, sans-serif;
+      color: #773c51;
+      text-align: center;
+      background:
+        radial-gradient(circle at top, #fffafa, transparent 55%),
+        linear-gradient(145deg, #ffe1e9, #fff2e8, #ffdce8);
+      overflow-x: hidden;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 7px 15px;
+      border-radius: 30px;
+      background: #ffffffaa;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      margin: 17px 0 5px;
+      font-family: Georgia, serif;
+      font-size: 32px;
+      color: #c04469;
+    }
+
+    .subtitle {
+      margin: 8px 0 20px;
+      font-size: 15px;
+    }
+
+    .bear-card {
+      padding: 22px 16px;
+      border: 1px solid white;
+      border-radius: 28px;
+      background: #ffffffbb;
+      box-shadow: 0 12px 35px #b64f7020;
+    }
+
+    .bear {
+      font-size: 105px;
+      line-height: 1.35;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .heart {
+      display: block;
+      margin-top: -7px;
+      font-size: 47px;
+      animation: pulse 1.5s infinite;
+    }
+
+    .letter {
+      margin-top: 20px;
+      padding: 22px 18px;
+      border-radius: 20px;
+      background: #fffaf7;
+      box-shadow: inset 0 0 0 1px #f6d6de;
+      animation: appear .6s ease;
+    }
+
+    .letter h2,
+    .final-message h2 {
+      color: #c04469;
+      font-family: Georgia, serif;
+    }
+
+    .letter p,
+    .final-message p {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .signature {
+      margin-top: 18px;
+      font-family: Georgia, serif;
+      font-size: 23px;
+      font-style: italic;
+      color: #bf456a;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 12px;
+      padding: 15px 12px;
+      border: none;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(.97);
+    }
+
+    .primary {
+      color: white;
+      background: linear-gradient(100deg, #ed5b86, #d83e70);
+      box-shadow: 0 6px 15px #dc477033;
+    }
+
+    .secondary {
+      color: #b84166;
+      background: white;
+      border: 1px solid #f4c6d3;
+    }
+
+    .choice-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .choice-buttons button {
+      margin-top: 0;
+      transition: opacity .25s, transform .25s;
+    }
+
+    #noBtn.disappeared {
+      opacity: 0;
+      transform: scale(.7);
+      pointer-events: none;
+    }
+
+    #hint {
+      padding: 10px;
+      color: #c04469;
+      animation: appear .4s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .final-message {
+      padding: 25px 15px;
+      margin-top: 18px;
+      border-radius: 22px;
+      background: #fff8fa;
+      animation: appear .6s ease;
+    }
+
+    .final-bear {
+      font-size: 65px;
+    }
+
+    .small {
+      margin: 20px 0 5px;
+      font-size: 13px;
+      opacity: .8;
+    }
+
+    .floating-heart {
+      position: fixed;
+      bottom: -35px;
+      z-index: 10;
+      pointer-events: none;
+      animation: rise 4s linear forwards;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+      }
+      50% {
+        transform: translateY(-8px) rotate(2deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.14);
+      }
+    }
+
+    @keyframes rise {
+      to {
+        transform: translateY(-115vh) rotate(25deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 360px) {
+      h1 {
+        font-size: 27px;
+      }
+
+      .bear {
+        font-size: 85px;
+      }
+
+      .letter {
+        padding: 18px 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <span class="tag">💌 МАЛЕНЬКОЕ ПИСЬМО ДЛЯ ТЕБЯ</span>
+
+    <h1>Моя Звёздочка ✨</h1>
+
+    <p class="subtitle">
+      У меня есть кое-что особенное для тебя...
+    </p>
+
+    <section class="bear-card">
+
+      <div class="bear" aria-label="Плюшевый мишка">🧸</div>
+      <span class="heart">❤️</span>
+
+      <h2>Привет, солнышко!</h2>
+      <p>Это письмо я приготовил специально для тебя.</p>
+
+      <button class="primary" id="openBtn">
+        💌 Открыть моё письмо
+      </button>
+
+      <!-- РОМАНТИЧЕСКОЕ ПИСЬМО -->
+      <div id="letter" class="letter hidden">
+
+        <h2>Моя любимая Звёздочка ❤️</h2>
+
+        <p>Привет, солнышко! ☀️</p>
+
+        <p>
+          Сегодня, 28 ноября, — день, когда на свет
+          появилась та, кого я очень сильно люблю
+          и продолжаю любить по сей день.
+        </p>
+
+        <p>
+          И в этот день я хочу пригласить тебя
+          провести со мной весь день...
+        </p>
+
+        <p><strong>Ты согласна? 🥹❤️</strong></p>
+
+        <div class="signature">Твой Мур 🐾</div>
+
+        <!-- ВЫБОР ДА ИЛИ НЕТ -->
+        <div class="choice-buttons" id="choiceButtons">
+
+          <button class="primary" id="yesBtn">
+            ❤️ Да, согласна!
+          </button>
+
+          <button class="secondary" id="noBtn">
+            🙈 Нет
+          </button>
+
+        </div>
+
+        <p id="hint" class="hidden">
+          Хи-хи, попробуй ещё раз, солнышко 💗
+        </p>
+
+      </div>
+
+      <!-- ФИНАЛ ПОСЛЕ НАЖАТИЯ ДА -->
+      <div id="final" class="final-message hidden">
+
+        <div class="final-bear">🧸💗</div>
+
+        <h2>Урааа! ❤️</h2>
+
+        <p>
+          Я очень хочу провести этот день с тобой,
+          моя Звёздочка!
+        </p>
+
+        <p>
+          Обещаю много улыбок, нежности и обнимашек.
+          Ты моё счастье! 💋
+        </p>
+
+        <p>
+          Пусть 28 ноября станет для нас
+          особенным днём! 🌷
+        </p>
+
+        <div class="signature">С любовью, Мур ❤️</div>
+
+        <button class="secondary" id="againBtn">
+          💌 Прочитать ещё раз
+        </button>
+
+      </div>
+
+    </section>
+
+    <p class="small">
+      Сделано с любовью специально для тебя ❤️
+    </p>
+
+    <p class="small">От твоего Мура 🐾</p>
+
+  </main>
+
+  <script>
+    // Подключение к Telegram Mini App
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+
+      try {
+        tg.setHeaderColor("#ffe7ee");
+        tg.setBackgroundColor("#ffe7ee");
+      } catch (e) {
+        // Открытка также работает в обычном браузере.
+      }
+    }
+
+    // Находим элементы страницы
+    const openBtn = document.getElementById("openBtn");
+    const letter = document.getElementById("letter");
+    const finalMessage = document.getElementById("final");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const hint = document.getElementById("hint");
+
+    // Открываем письмо
+    openBtn.addEventListener("click", () => {
+      letter.classList.remove("hidden");
+      openBtn.classList.add("hidden");
+
+      hearts(12);
+
+      letter.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
+
+    // Нажатие ДА
+    yesBtn.addEventListener("click", () => {
+      letter.classList.add("hidden");
+      finalMessage.classList.remove("hidden");
+
+      hearts(30);
+
+      finalMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      if (tg) {
+        try {
+          tg.HapticFeedback?.notificationOccurred("success");
+        } catch (e) {}
+      }
+    });
+
+    // Нажатие НЕТ: кнопка исчезает
+    noBtn.addEventListener("click", () => {
+      if (noBtn.classList.contains("disappeared")) {
+        return;
+      }
+
+      noBtn.classList.add("disappeared");
+      hint.classList.remove("hidden");
+
+      hearts(15);
+
+      setTimeout(() => {
+        noBtn.classList.add("hidden");
+      }, 260);
+    });
+
+    // Повторное чтение открытки
+    document.getElementById("againBtn").addEventListener("click", () => {
+      finalMessage.classList.add("hidden");
+      letter.classList.remove("hidden");
+
+      letter.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
+
+    // Летающие сердечки
+    function hearts(count) {
+      const symbols = ["❤️", "💕", "💗", "💖", "✨"];
+
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement("span");
+
+        heart.className = "floating-heart";
+
+        heart.textContent =
+          symbols[Math.floor(Math.random() * symbols.length)];
+
+        heart.style.left = Math.random() * 100 + "vw";
+
+        heart.style.fontSize =
+          (16 + Math.random() * 22) + "px";
+
+        heart.style.animationDuration =
+          (3 + Math.random() * 3) + "s";
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 6500);
+      }
+    }
+  </script>
+</body>
+</html>
